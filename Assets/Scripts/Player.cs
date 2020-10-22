@@ -22,5 +22,14 @@ public class Player : MonoBehaviour
         Vector2 velocity = new Vector2(deltaX * moveSpeed, rigidBody.velocity.y);
         
         rigidBody.velocity = velocity;
+        FlipSprite();
+    }
+
+    private void FlipSprite() {
+        bool playerIsMoving = Mathf.Abs(rigidBody.velocity.x) > Mathf.Epsilon;
+
+        if (playerIsMoving) {
+            transform.localScale = new Vector2(Mathf.Sign(rigidBody.velocity.x), 1);
+        }
     }
 }
