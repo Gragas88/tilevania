@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    Animator animator;
     Rigidbody2D rigidBody;
     [SerializeField] float moveSpeed = 5f;
     void Start()
     {
         rigidBody = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
 
@@ -22,14 +24,13 @@ public class Player : MonoBehaviour
         Vector2 velocity = new Vector2(deltaX * moveSpeed, rigidBody.velocity.y);
         
         rigidBody.velocity = velocity;
-        FlipSprite();
-    }
 
-    private void FlipSprite() {
-        bool playerIsMoving = Mathf.Abs(rigidBody.velocity.x) > Mathf.Epsilon;
+        bool isRunning = Mathf.Abs(rigidBody.velocity.x) > Mathf.Epsilon;
+        
+        animator.SetBool("Running", isRunning);
 
-        if (playerIsMoving) {
-            transform.localScale = new Vector2(Mathf.Sign(rigidBody.velocity.x), 1);
+        if (isRunning) {
+            transform.localScale = new Vector2(Mathf.Sign(rigidBody.velocity.x), 1f);
         }
     }
 }
