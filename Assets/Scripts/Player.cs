@@ -7,8 +7,9 @@ public class Player : MonoBehaviour
     Animator animator;
     Rigidbody2D rigidBody;
     Collider2D collider;
-    [SerializeField] float jumpSpeed = 25f;
-    [SerializeField] float moveSpeed = 7f;
+    [SerializeField] float jumpSpeed = 28f;
+    [SerializeField] float moveSpeed = 10f;
+    [SerializeField] float climbSpeed = 4f;
     void Start()
     {
         rigidBody = GetComponent<Rigidbody2D>();
@@ -20,6 +21,7 @@ public class Player : MonoBehaviour
     {
         Run();
         Jump();
+        Climb();
     }
 
     private void Run() {
@@ -47,6 +49,18 @@ public class Player : MonoBehaviour
         
         if (Input.GetButtonDown("Jump")) {
             rigidBody.velocity += new Vector2(0f, jumpSpeed);
+        }
+    }
+
+    private void Climb() {
+        bool isClimbing = collider.IsTouchingLayers(LayerMask.GetMask("Ladders"));
+        animator.SetBool("Climbing", isClimbing);
+
+        if (isClimbing) {
+            float deltaY = Input.GetAxis("Vertical");
+            var velocity = new Vector2(rigidBody.velocity.x, deltaY * climbSpeed);
+            
+            rigidBody.velocity = velocity;
         }
     }
 }
