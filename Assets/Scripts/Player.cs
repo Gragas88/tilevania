@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
     Animator animator;
     Rigidbody2D rigidBody;
     Collider2D collider;
+    float gravityScale;
     [SerializeField] float jumpSpeed = 28f;
     [SerializeField] float moveSpeed = 10f;
     [SerializeField] float climbSpeed = 4f;
@@ -15,6 +16,7 @@ public class Player : MonoBehaviour
         rigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         collider = GetComponent<Collider2D>();
+        gravityScale = rigidBody.gravityScale;
     }
 
     void Update()
@@ -27,11 +29,10 @@ public class Player : MonoBehaviour
     private void Run() {
         float deltaX = Input.GetAxis("Horizontal");
         var velocity = new Vector2(deltaX * moveSpeed, rigidBody.velocity.y);
-        
         rigidBody.velocity = velocity;
 
         bool isRunning = Mathf.Abs(rigidBody.velocity.x) > Mathf.Epsilon;
-
+        
         animator.SetBool("Running", isRunning);
 
         if (isRunning) {
@@ -43,9 +44,6 @@ public class Player : MonoBehaviour
         if (!collider.IsTouchingLayers(LayerMask.GetMask("Ground"))) {
             return;
         }
-
-
-        bool isJumping = Mathf.Abs(rigidBody.velocity.y) > Mathf.Epsilon;
         
         if (Input.GetButtonDown("Jump")) {
             rigidBody.velocity += new Vector2(0f, jumpSpeed);
@@ -53,14 +51,18 @@ public class Player : MonoBehaviour
     }
 
     private void Climb() {
-        bool isClimbing = collider.IsTouchingLayers(LayerMask.GetMask("Ladders"));
-        animator.SetBool("Climbing", isClimbing);
-
-        if (isClimbing) {
-            float deltaY = Input.GetAxis("Vertical");
-            var velocity = new Vector2(rigidBody.velocity.x, deltaY * climbSpeed);
-            
-            rigidBody.velocity = velocity;
+        if (!collider.IsTouchingLayers(LayerMask.GetMask("Ladders"))) {
+            rigidBody.gravityScale = gravityScale;
+            animator.SetBool("Climbing", false);
+            return;
         }
+    
+        float deltaY = Input.GetAxis("Vertical");
+        var velocity = new Vector2(rigidBody.velocity.x, deltaY * climbSpeed);
+        rigidBody.gravityScale = 0;
+        rigidBody.velocity = velocity;
+
+        bool isClimbing = Mathf.Abs(rigidBody.velocity.y) > Mathf.Epsilon;
+        animator.SetBool("Climbing", isClimbing);
     }
 }
