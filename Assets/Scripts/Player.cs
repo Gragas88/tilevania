@@ -53,7 +53,7 @@ public class Player : MonoBehaviour
     }
 
     private void Climb() {
-        if (!bodyCollider.IsTouchingLayers(LayerMask.GetMask("Ladders"))) {
+        if (!feetCollider.IsTouchingLayers(LayerMask.GetMask("Ladders"))) {
             rigidBody.gravityScale = gravityScale;
             animator.SetBool("Climbing", false);
             return;
