@@ -9,9 +9,13 @@ public class Player : MonoBehaviour
     CapsuleCollider2D bodyCollider;
     BoxCollider2D feetCollider;
     float gravityScale;
+
+    bool isAlive = true;
     [SerializeField] float jumpSpeed = 28f;
     [SerializeField] float moveSpeed = 10f;
     [SerializeField] float climbSpeed = 4f;
+
+    Vector2 deathKick;
     void Start()
     {
         rigidBody = GetComponent<Rigidbody2D>();
@@ -19,13 +23,31 @@ public class Player : MonoBehaviour
         bodyCollider = GetComponent<CapsuleCollider2D>();
         feetCollider = GetComponent<BoxCollider2D>();
         gravityScale = rigidBody.gravityScale;
+        deathKick = new Vector2(15f, 15f);
     }
 
     void Update()
     {
+        if (!isAlive) {
+            return;
+        }
+
+
         Run();
         Jump();
         Climb();
+        Die();
+    }
+
+    private void Die() {
+        if (!bodyCollider.IsTouchingLayers(LayerMask.GetMask("Enemy"))) {
+            return;
+        }
+
+        isAlive = false;
+        animator.SetTrigger("Die");
+        rigidBody.velocity = deathKick;
+        rigidBody.isKinematic = false;
     }
 
     private void Run() {

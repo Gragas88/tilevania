@@ -18,14 +18,6 @@ public class Enemy : MonoBehaviour
     {
         Run();
     }
-
-
-    void onCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.tag == "Player") {
-            Destroy(gameObject);
-        }
-    }
     
     void OnTriggerExit2D(Collider2D other)
     {
