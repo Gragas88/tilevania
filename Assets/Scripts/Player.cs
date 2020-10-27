@@ -40,14 +40,19 @@ public class Player : MonoBehaviour
     }
 
     private void Die() {
-        if (!bodyCollider.IsTouchingLayers(LayerMask.GetMask("Enemy"))) {
+        bool isTouchingEnemy = bodyCollider.IsTouchingLayers(LayerMask.GetMask("Enemy"));
+        bool isTouchingSpikes = bodyCollider.IsTouchingLayers(LayerMask.GetMask("Hazards"));
+
+        if (!isTouchingEnemy && !isTouchingSpikes) {
             return;
         }
 
         isAlive = false;
         animator.SetTrigger("Die");
-        rigidBody.velocity = deathKick;
-        rigidBody.isKinematic = false;
+
+        if (isTouchingEnemy) {
+            rigidBody.velocity = deathKick;
+        }
     }
 
     private void Run() {
